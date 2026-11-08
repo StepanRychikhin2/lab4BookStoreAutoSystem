@@ -2,7 +2,7 @@
 #include <string>
 #include <Windows.h>
 #include <vector>
-
+#include <cctype>
 using namespace std;
 
 void welcome()
@@ -58,6 +58,130 @@ namespace AddModule
 }
 
 // ========== МОДУЛЬ ПОШУКУ ==========
+
+void searchBooks()
+{
+    string uqery;
+    int searchType;
+
+    cout << "1 - Search by author\n";
+    cout << "2 - Search by title\n";
+    cout << "3 - Search by availability\n";
+    cout << "Choose: ";
+    cin >> searchType;
+
+    switch (searchType)
+    {
+    case 1:
+    {
+        cout << "Enter author: ";
+        getline(cin >> ws, uqery);
+bool isfound = false;
+        for (char& letter : uqery)
+        {
+            letter = std::tolower(static_cast<unsigned char>(letter));
+        }
+
+        for (Book& book : books)
+        {
+            string letterbook = book.author;
+
+            for (char& letter : letterbook)
+            {
+                letter = std::tolower(static_cast<unsigned char>(letter));
+            }
+
+            if (letterbook.find(uqery) != string::npos)
+            {
+
+                isfound = true;
+                cout << "Author: " << book.author << " | "
+                     << "Title: " << book.title << " | "
+                     << "Price: " << book.price << " UAH | In Stock: "
+                     << (book.inStock ? "Yes" : "No")
+                     << " | Year: " << book.year << "\n";
+            }
+        }
+if (!isfound)
+            {
+                cout << "No books found by this author \"" << uqery << "\".\n";
+            }
+        break;
+    }
+
+    case 2:
+    {
+        cout << "Enter title: ";
+        getline(cin >> ws, uqery);
+ bool isfound = false;
+        for (char& letter : uqery)
+        {
+            letter = std::tolower(static_cast<unsigned char>(letter));
+        }
+
+        for (Book& book : books)
+        {
+            string letterbook = book.title;
+
+            for (char& letter : letterbook)
+            {
+                letter = std::tolower(static_cast<unsigned char>(letter));
+            }
+
+            if (letterbook.find(uqery) != string::npos)
+            {
+                isfound = true;
+                cout << "Author: " << book.author << " | "
+                     << "Title: " << book.title << " | "
+                     << "Price: " << book.price << " UAH | In Stock: "
+                     << (book.inStock ? "Yes" : "No")
+                     << " | Year: " << book.year << "\n";
+            } 
+
+
+        }
+     if (!isfound)
+            {
+                cout << "No books found by this name \"" << uqery << "\".\n";
+            }
+        break;
+    }
+
+    case 3:
+    {
+        int availability;
+
+        cout << "1 - In stock, 0 - Out of stock: ";
+        cin >> availability;
+
+        if (availability != 0 && availability != 1)
+        {
+            cout << "Enter only 0 or 1.\n";
+            break;
+        }
+
+        bool wantedStock = (availability == 1);
+         for ( const Book& book : books)
+        {
+            if (book.inStock == wantedStock)
+            {
+                cout << "Author: " << book.author << " | "
+                     << "Title: " << book.title << " | "
+                     << "Price: " << book.price << " UAH | In Stock: "
+                     << (book.inStock ? "Yes" : "No")
+                     << " | Year: " << book.year << "\n";
+            }
+        }
+         
+        
+        break;
+    }
+
+    default:
+        cout << "Unknown option.\n";
+        break;
+    }
+}
 
 int main()
 {
