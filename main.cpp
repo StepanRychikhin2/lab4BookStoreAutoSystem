@@ -36,6 +36,8 @@ vector<Book> books =
 
 void showBooks()
 {
+    cout << "\n===== BOOKS IN CATALOGUE =====\n";
+
     for (const auto& element : books)
     {
         cout << "ID: " << element.id
@@ -53,7 +55,64 @@ namespace AddModule
 {
     void addBook()
     {
+        Book newBook;
+        bool isUniqueId = false;
 
+        while (!isUniqueId) {
+            cout << "Введіть ID книги: ";
+
+            while (!(cin >> newBook.id)) {
+                cout << "Помилка. ID має бути числом. Спробуйте ще раз: ";
+                cin.clear();
+                cin.ignore(10000, '\n');
+            }
+
+            isUniqueId = true;
+            for (const auto& element : books) {
+                if (element.id == newBook.id) {
+                    cout << "Книга з таким ID вже існує! ";
+                    isUniqueId = false;
+                    break;
+                }
+            }
+        }
+
+        cin.ignore(10000, '\n');
+
+        cout << "Введіть автора книги: ";
+        getline(cin, newBook.author);
+
+        cout << "Введіть назву книги: ";
+        getline(cin, newBook.title);
+
+        cout << "Введіть ціну книги (грн): ";
+        while (!(cin >> newBook.price) || newBook.price < 0) 
+        {
+            cout << "Помилка. Ціна має бути додатним числом. Спробуйте ще раз: ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+
+        int stockInput;
+        cout << "Чи є книга в наявності? (1 - так, 0 - ні): ";
+        while (!(cin >> stockInput) || (stockInput != 0 && stockInput != 1)) 
+        {
+            cout << "Помилка Введіть лише 1 (так) або 0 (ні): ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+        newBook.inStock = (stockInput == 1);
+
+        cout << "Введіть рік видання: ";
+        while (!(cin >> newBook.year) || newBook.year > 2026) 
+        {
+            cout << "Помилка. Некоректний рік. Спробуйте ще раз: ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+
+        books.push_back(newBook);
+        cout << "\nУспіх! Книгу \"" << newBook.title << "\" успішно додано!\n\n";
     }
 }
 
@@ -64,6 +123,40 @@ int main()
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
 
-    showBooks();
+    welcome();
+
+    while (true)
+    {
+        int action;
+        cout << "\nОберіть дію:\n"
+            "1: Вивести весь каталог книг\n"
+            "2: Додати книгу\n"
+            "3: Редагувати книгу\n"
+            "4: Пошук книги\n"
+            "0: Вийти з програми\n";
+
+        while (!(cin >> action))
+        {
+            cout << "Помилка. Введіть цифру 0-4. Спробуйте ще раз: ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+
+        switch (action)
+        {
+        case 1:
+            showBooks();
+            break;
+        case 2:
+            AddModule::addBook();
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 0:
+            return 0;
+        }
+    }
     return 0;
 }
