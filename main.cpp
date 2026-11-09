@@ -212,12 +212,12 @@ namespace searchModule
             int availability;
 
             cout << "1 - In stock, 0 - Out of stock: ";
-            cin >> availability;
 
-            if (availability != 0 && availability != 1)
+            while (!(cin >> availability) || (availability != 0 && availability != 1))
             {
                 cout << "Enter only 0 or 1.\n";
-                break;
+                cin.clear();
+                cin.ignore(10000, '\n');
             }
 
             bool wantedStock = (availability == 1);
