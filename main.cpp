@@ -118,6 +118,116 @@ namespace AddModule
 
 // ========== МОДУЛЬ ПОШУКУ ==========
 
+
+// ========== МОДУЛЬ РЕДАГУВАННЯ ==========
+namespace editModule
+{
+    void editBook()
+    {
+        while (true)
+        {
+            int id;
+            cout << "\nВведіть ID книги, яку ви хочете редагувати\n"
+                    "0 - вихід: ";
+            while (!(cin >> id))
+            {
+                cout << "Помилка. ID має бути числом. Спробуйте ще раз: ";
+                cin.clear();
+                cin.ignore(10000, '\n');
+            }
+            if (id == 0) return;
+
+            int index = -1;
+            for (int i = 0; i < (int)books.size(); i++)
+            {
+                if (books[i].id == id)
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index == -1)
+            {
+                cout << "Книгу з таким ID не знайдено.\n";
+                continue;
+            }
+
+            cout << "\nЩо ви хочете редагувати?\n"
+                    "========================================\n"
+                    "1. Автор\n"
+                    "2. Ціна\n"
+                    "3. Наявність\n"
+                    "4. Рік\n"
+                    "========================================\n"
+                    "Ваш вибір: ";
+
+            int choice;
+            while (!(cin >> choice) || choice < 1 || choice > 4)
+            {
+                cout << "Помилка. Введіть число від 1 до 4: ";
+                cin.clear();
+                cin.ignore(10000, '\n');
+            }
+            cin.ignore(10000, '\n');
+
+            switch (choice)
+            {
+            case 1:
+            {
+                string newAuthor;
+                do
+                {
+                    cout << "Введіть нового автора: ";
+                    getline(cin, newAuthor);
+                } while (newAuthor.empty());
+                books[index].author = newAuthor;
+                break;
+            }
+            case 2:
+            {
+                double newPrice;
+                cout << "Введіть нову ціну (грн): ";
+                while (!(cin >> newPrice) || newPrice <= 0)
+                {
+                    cout << "Помилка. Ціна має бути додатним числом. Спробуйте ще раз: ";
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                }
+                books[index].price = newPrice;
+                break;
+            }
+            case 3:
+            {
+                int stockInput;
+                cout << "Чи є книга в наявності? (1 - так, 0 - ні): ";
+                while (!(cin >> stockInput) || (stockInput != 0 && stockInput != 1))
+                {
+                    cout << "Помилка. Введіть лише 1 (так) або 0 (ні): ";
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                }
+                books[index].inStock = (stockInput == 1);
+                break;
+            }
+            case 4:
+            {
+                int newYear;
+                cout << "Введіть новий рік видання: ";
+                while (!(cin >> newYear) || newYear < 1000 || newYear > 2026)
+                {
+                    cout << "Помилка. Некоректний рік. Спробуйте ще раз: ";
+                    cin.clear();
+                    cin.ignore(10000, '\n');
+                }
+                books[index].year = newYear;
+                break;
+            }
+            }
+
+            cout << "\nКнигу оновлено!\n";
+        }
+
 void searchBooks()
 {
     string uqery;
@@ -239,6 +349,7 @@ if (!isfound)
     default:
         cout << "Unknown option.\n";
         break;
+
     }
 }
 
@@ -283,4 +394,4 @@ int main()
         }
     }
     return 0;
-}
+}git branch --show-current
