@@ -23,32 +23,30 @@ struct Book
 };
 
 vector<Book> books =
-{
-    {1, "J. R. R. Tolkien", "The Hobbit", 350.00, true, 2020},
-    {2, "Frank Herbert", "Dune", 420.00, true, 2021},
-    {3, "George Orwell", "1984", 280.00, false, 2019},
-    {4, "George Orwell", "Animal Farm", 220.00, true, 2022},
-    {5, "J. R. R. Tolkien", "The Fellowship of the Ring", 480.00, true, 2020},
-    {6, "J. R. R. Tolkien", "The Two Towers", 460.00, false, 2020},
-    {7, "J. R. R. Tolkien", "The Return of the King", 490.00, true, 2020},
-    {8, "J. R. R. Tolkien", "The Silmarillion", 520.00, true, 2023}
-};
+    {
+        {1, "J. R. R. Tolkien", "The Hobbit", 350.00, true, 2020},
+        {2, "Frank Herbert", "Dune", 420.00, true, 2021},
+        {3, "George Orwell", "1984", 280.00, false, 2019},
+        {4, "George Orwell", "Animal Farm", 220.00, true, 2022},
+        {5, "J. R. R. Tolkien", "The Fellowship of the Ring", 480.00, true, 2020},
+        {6, "J. R. R. Tolkien", "The Two Towers", 460.00, false, 2020},
+        {7, "J. R. R. Tolkien", "The Return of the King", 490.00, true, 2020},
+        {8, "J. R. R. Tolkien", "The Silmarillion", 520.00, true, 2023}};
 
 void showBooks()
 {
     cout << "\n===== BOOKS IN CATALOGUE =====\n";
 
-    for (const auto& element : books)
+    for (const auto &element : books)
     {
         cout << "ID: " << element.id
-            << " | Author: " << element.author
-            << " | Title: \"" << element.title << "\""
-            << " | Price: " << element.price
-            << " UAH | In Stock: " << (element.inStock ? "Yes" : "No")
-            << " | Year: " << element.year << "\n";
+             << " | Author: " << element.author
+             << " | Title: \"" << element.title << "\""
+             << " | Price: " << element.price
+             << " UAH | In Stock: " << (element.inStock ? "Yes" : "No")
+             << " | Year: " << element.year << "\n";
     }
 }
-
 
 // ========== МОДУЛЬ ДОДАВАННЯ КНИГ ==========
 namespace AddModule
@@ -58,18 +56,22 @@ namespace AddModule
         Book newBook;
         bool isUniqueId = false;
 
-        while (!isUniqueId) {
+        while (!isUniqueId)
+        {
             cout << "Введіть ID книги: ";
 
-            while (!(cin >> newBook.id)) {
+            while (!(cin >> newBook.id))
+            {
                 cout << "Помилка. ID має бути числом. Спробуйте ще раз: ";
                 cin.clear();
                 cin.ignore(10000, '\n');
             }
 
             isUniqueId = true;
-            for (const auto& element : books) {
-                if (element.id == newBook.id) {
+            for (const auto &element : books)
+            {
+                if (element.id == newBook.id)
+                {
                     cout << "Книга з таким ID вже існує! ";
                     isUniqueId = false;
                     break;
@@ -86,7 +88,7 @@ namespace AddModule
         getline(cin, newBook.title);
 
         cout << "Введіть ціну книги (грн): ";
-        while (!(cin >> newBook.price) || newBook.price < 0) 
+        while (!(cin >> newBook.price) || newBook.price < 0)
         {
             cout << "Помилка. Ціна має бути додатним числом. Спробуйте ще раз: ";
             cin.clear();
@@ -95,7 +97,7 @@ namespace AddModule
 
         int stockInput;
         cout << "Чи є книга в наявності? (1 - так, 0 - ні): ";
-        while (!(cin >> stockInput) || (stockInput != 0 && stockInput != 1)) 
+        while (!(cin >> stockInput) || (stockInput != 0 && stockInput != 1))
         {
             cout << "Помилка Введіть лише 1 (так) або 0 (ні): ";
             cin.clear();
@@ -104,7 +106,7 @@ namespace AddModule
         newBook.inStock = (stockInput == 1);
 
         cout << "Введіть рік видання: ";
-        while (!(cin >> newBook.year) || newBook.year > 2026) 
+        while (!(cin >> newBook.year) || newBook.year > 2026)
         {
             cout << "Помилка. Некоректний рік. Спробуйте ще раз: ";
             cin.clear();
@@ -117,7 +119,129 @@ namespace AddModule
 }
 
 // ========== МОДУЛЬ ПОШУКУ ==========
+namespace searchModule
+{
+    void searchBooks()
+    {
+        string uqery;
+        int searchType;
 
+        cout << "1 - Search by author\n";
+        cout << "2 - Search by title\n";
+        cout << "3 - Search by availability\n";
+        cout << "Choose: ";
+        cin >> searchType;
+
+        switch (searchType)
+        {
+        case 1:
+        {
+            cout << "Enter author: ";
+            getline(cin >> ws, uqery);
+            bool isfound = false;
+            for (char &letter : uqery)
+            {
+                letter = std::tolower(static_cast<unsigned char>(letter));
+            }
+
+            for (Book &book : books)
+            {
+                string letterbook = book.author;
+
+                for (char &letter : letterbook)
+                {
+                    letter = std::tolower(static_cast<unsigned char>(letter));
+                }
+
+                if (letterbook.find(uqery) != string::npos)
+                {
+
+                    isfound = true;
+                    cout << "Author: " << book.author << " | "
+                         << "Title: " << book.title << " | "
+                         << "Price: " << book.price << " UAH | In Stock: "
+                         << (book.inStock ? "Yes" : "No")
+                         << " | Year: " << book.year << "\n";
+                }
+            }
+            if (!isfound)
+            {
+                cout << "No books found by this author \"" << uqery << "\".\n";
+            }
+            break;
+        }
+
+        case 2:
+        {
+            cout << "Enter title: ";
+            getline(cin >> ws, uqery);
+            bool isfound = false;
+            for (char &letter : uqery)
+            {
+                letter = std::tolower(static_cast<unsigned char>(letter));
+            }
+
+            for (Book &book : books)
+            {
+                string letterbook = book.title;
+
+                for (char &letter : letterbook)
+                {
+                    letter = std::tolower(static_cast<unsigned char>(letter));
+                }
+
+                if (letterbook.find(uqery) != string::npos)
+                {
+                    isfound = true;
+                    cout << "Author: " << book.author << " | "
+                         << "Title: " << book.title << " | "
+                         << "Price: " << book.price << " UAH | In Stock: "
+                         << (book.inStock ? "Yes" : "No")
+                         << " | Year: " << book.year << "\n";
+                }
+            }
+            if (!isfound)
+            {
+                cout << "No books found by this name \"" << uqery << "\".\n";
+            }
+            break;
+        }
+
+        case 3:
+        {
+            int availability;
+
+            cout << "1 - In stock, 0 - Out of stock: ";
+            cin >> availability;
+
+            if (availability != 0 && availability != 1)
+            {
+                cout << "Enter only 0 or 1.\n";
+                break;
+            }
+
+            bool wantedStock = (availability == 1);
+            for (const Book &book : books)
+            {
+                if (book.inStock == wantedStock)
+                {
+                    cout << "Author: " << book.author << " | "
+                         << "Title: " << book.title << " | "
+                         << "Price: " << book.price << " UAH | In Stock: "
+                         << (book.inStock ? "Yes" : "No")
+                         << " | Year: " << book.year << "\n";
+                }
+            }
+
+            break;
+        }
+
+        default:
+            cout << "Unknown option.\n";
+            break;
+        }
+    }
+}
 
 // ========== МОДУЛЬ РЕДАГУВАННЯ ==========
 namespace editModule
@@ -135,7 +259,8 @@ namespace editModule
                 cin.clear();
                 cin.ignore(10000, '\n');
             }
-            if (id == 0) return;
+            if (id == 0)
+                return;
 
             int index = -1;
             for (int i = 0; i < (int)books.size(); i++)
@@ -227,129 +352,6 @@ namespace editModule
 
             cout << "\nКнигу оновлено!\n";
         }
-
-void searchBooks()
-{
-    string uqery;
-    int searchType;
-
-    cout << "1 - Search by author\n";
-    cout << "2 - Search by title\n";
-    cout << "3 - Search by availability\n";
-    cout << "Choose: ";
-    cin >> searchType;
-
-    switch (searchType)
-    {
-    case 1:
-    {
-        cout << "Enter author: ";
-        getline(cin >> ws, uqery);
-bool isfound = false;
-        for (char& letter : uqery)
-        {
-            letter = std::tolower(static_cast<unsigned char>(letter));
-        }
-
-        for (Book& book : books)
-        {
-            string letterbook = book.author;
-
-            for (char& letter : letterbook)
-            {
-                letter = std::tolower(static_cast<unsigned char>(letter));
-            }
-
-            if (letterbook.find(uqery) != string::npos)
-            {
-
-                isfound = true;
-                cout << "Author: " << book.author << " | "
-                     << "Title: " << book.title << " | "
-                     << "Price: " << book.price << " UAH | In Stock: "
-                     << (book.inStock ? "Yes" : "No")
-                     << " | Year: " << book.year << "\n";
-            }
-        }
-if (!isfound)
-            {
-                cout << "No books found by this author \"" << uqery << "\".\n";
-            }
-        break;
-    }
-
-    case 2:
-    {
-        cout << "Enter title: ";
-        getline(cin >> ws, uqery);
- bool isfound = false;
-        for (char& letter : uqery)
-        {
-            letter = std::tolower(static_cast<unsigned char>(letter));
-        }
-
-        for (Book& book : books)
-        {
-            string letterbook = book.title;
-
-            for (char& letter : letterbook)
-            {
-                letter = std::tolower(static_cast<unsigned char>(letter));
-            }
-
-            if (letterbook.find(uqery) != string::npos)
-            {
-                isfound = true;
-                cout << "Author: " << book.author << " | "
-                     << "Title: " << book.title << " | "
-                     << "Price: " << book.price << " UAH | In Stock: "
-                     << (book.inStock ? "Yes" : "No")
-                     << " | Year: " << book.year << "\n";
-            } 
-
-
-        }
-     if (!isfound)
-            {
-                cout << "No books found by this name \"" << uqery << "\".\n";
-            }
-        break;
-    }
-
-    case 3:
-    {
-        int availability;
-
-        cout << "1 - In stock, 0 - Out of stock: ";
-        cin >> availability;
-
-        if (availability != 0 && availability != 1)
-        {
-            cout << "Enter only 0 or 1.\n";
-            break;
-        }
-
-        bool wantedStock = (availability == 1);
-         for ( const Book& book : books)
-        {
-            if (book.inStock == wantedStock)
-            {
-                cout << "Author: " << book.author << " | "
-                     << "Title: " << book.title << " | "
-                     << "Price: " << book.price << " UAH | In Stock: "
-                     << (book.inStock ? "Yes" : "No")
-                     << " | Year: " << book.year << "\n";
-            }
-        }
-         
-        
-        break;
-    }
-
-    default:
-        cout << "Unknown option.\n";
-        break;
-
     }
 }
 
@@ -364,11 +366,11 @@ int main()
     {
         int action;
         cout << "\nОберіть дію:\n"
-            "1: Вивести весь каталог книг\n"
-            "2: Додати книгу\n"
-            "3: Редагувати книгу\n"
-            "4: Пошук книги\n"
-            "0: Вийти з програми\n";
+                "1: Вивести весь каталог книг\n"
+                "2: Додати книгу\n"
+                "3: Редагувати книгу\n"
+                "4: Пошук книги\n"
+                "0: Вийти з програми\n";
 
         while (!(cin >> action))
         {
@@ -386,12 +388,18 @@ int main()
             AddModule::addBook();
             break;
         case 3:
+            editModule::editBook();
             break;
         case 4:
+            searchModule::searchBooks();
             break;
         case 0:
             return 0;
+        
+        default:
+            cout << "Помилка. Введіть цифру 0-4. Спробуйте ще раз: ";
+            break;
         }
     }
     return 0;
-}git branch --show-current
+}
