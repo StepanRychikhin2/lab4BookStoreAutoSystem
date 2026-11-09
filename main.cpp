@@ -2,7 +2,7 @@
 #include <string>
 #include <Windows.h>
 #include <vector>
-
+#include <cctype>
 using namespace std;
 
 void welcome()
@@ -36,6 +36,8 @@ vector<Book> books =
 
 void showBooks()
 {
+    cout << "\n===== BOOKS IN CATALOGUE =====\n";
+
     for (const auto& element : books)
     {
         cout << "ID: " << element.id
@@ -53,11 +55,69 @@ namespace AddModule
 {
     void addBook()
     {
+        Book newBook;
+        bool isUniqueId = false;
 
+        while (!isUniqueId) {
+            cout << "Введіть ID книги: ";
+
+            while (!(cin >> newBook.id)) {
+                cout << "Помилка. ID має бути числом. Спробуйте ще раз: ";
+                cin.clear();
+                cin.ignore(10000, '\n');
+            }
+
+            isUniqueId = true;
+            for (const auto& element : books) {
+                if (element.id == newBook.id) {
+                    cout << "Книга з таким ID вже існує! ";
+                    isUniqueId = false;
+                    break;
+                }
+            }
+        }
+
+        cin.ignore(10000, '\n');
+
+        cout << "Введіть автора книги: ";
+        getline(cin, newBook.author);
+
+        cout << "Введіть назву книги: ";
+        getline(cin, newBook.title);
+
+        cout << "Введіть ціну книги (грн): ";
+        while (!(cin >> newBook.price) || newBook.price < 0) 
+        {
+            cout << "Помилка. Ціна має бути додатним числом. Спробуйте ще раз: ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+
+        int stockInput;
+        cout << "Чи є книга в наявності? (1 - так, 0 - ні): ";
+        while (!(cin >> stockInput) || (stockInput != 0 && stockInput != 1)) 
+        {
+            cout << "Помилка Введіть лише 1 (так) або 0 (ні): ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+        newBook.inStock = (stockInput == 1);
+
+        cout << "Введіть рік видання: ";
+        while (!(cin >> newBook.year) || newBook.year > 2026) 
+        {
+            cout << "Помилка. Некоректний рік. Спробуйте ще раз: ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+
+        books.push_back(newBook);
+        cout << "\nУспіх! Книгу \"" << newBook.title << "\" успішно додано!\n\n";
     }
 }
 
 // ========== МОДУЛЬ ПОШУКУ ==========
+
 
 // ========== МОДУЛЬ РЕДАГУВАННЯ ==========
 namespace editModule
@@ -167,6 +227,129 @@ namespace editModule
 
             cout << "\nКнигу оновлено!\n";
         }
+
+void searchBooks()
+{
+    string uqery;
+    int searchType;
+
+    cout << "1 - Search by author\n";
+    cout << "2 - Search by title\n";
+    cout << "3 - Search by availability\n";
+    cout << "Choose: ";
+    cin >> searchType;
+
+    switch (searchType)
+    {
+    case 1:
+    {
+        cout << "Enter author: ";
+        getline(cin >> ws, uqery);
+bool isfound = false;
+        for (char& letter : uqery)
+        {
+            letter = std::tolower(static_cast<unsigned char>(letter));
+        }
+
+        for (Book& book : books)
+        {
+            string letterbook = book.author;
+
+            for (char& letter : letterbook)
+            {
+                letter = std::tolower(static_cast<unsigned char>(letter));
+            }
+
+            if (letterbook.find(uqery) != string::npos)
+            {
+
+                isfound = true;
+                cout << "Author: " << book.author << " | "
+                     << "Title: " << book.title << " | "
+                     << "Price: " << book.price << " UAH | In Stock: "
+                     << (book.inStock ? "Yes" : "No")
+                     << " | Year: " << book.year << "\n";
+            }
+        }
+if (!isfound)
+            {
+                cout << "No books found by this author \"" << uqery << "\".\n";
+            }
+        break;
+    }
+
+    case 2:
+    {
+        cout << "Enter title: ";
+        getline(cin >> ws, uqery);
+ bool isfound = false;
+        for (char& letter : uqery)
+        {
+            letter = std::tolower(static_cast<unsigned char>(letter));
+        }
+
+        for (Book& book : books)
+        {
+            string letterbook = book.title;
+
+            for (char& letter : letterbook)
+            {
+                letter = std::tolower(static_cast<unsigned char>(letter));
+            }
+
+            if (letterbook.find(uqery) != string::npos)
+            {
+                isfound = true;
+                cout << "Author: " << book.author << " | "
+                     << "Title: " << book.title << " | "
+                     << "Price: " << book.price << " UAH | In Stock: "
+                     << (book.inStock ? "Yes" : "No")
+                     << " | Year: " << book.year << "\n";
+            } 
+
+
+        }
+     if (!isfound)
+            {
+                cout << "No books found by this name \"" << uqery << "\".\n";
+            }
+        break;
+    }
+
+    case 3:
+    {
+        int availability;
+
+        cout << "1 - In stock, 0 - Out of stock: ";
+        cin >> availability;
+
+        if (availability != 0 && availability != 1)
+        {
+            cout << "Enter only 0 or 1.\n";
+            break;
+        }
+
+        bool wantedStock = (availability == 1);
+         for ( const Book& book : books)
+        {
+            if (book.inStock == wantedStock)
+            {
+                cout << "Author: " << book.author << " | "
+                     << "Title: " << book.title << " | "
+                     << "Price: " << book.price << " UAH | In Stock: "
+                     << (book.inStock ? "Yes" : "No")
+                     << " | Year: " << book.year << "\n";
+            }
+        }
+         
+        
+        break;
+    }
+
+    default:
+        cout << "Unknown option.\n";
+        break;
+
     }
 }
 
@@ -175,6 +358,40 @@ int main()
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
 
-    showBooks();
+    welcome();
+
+    while (true)
+    {
+        int action;
+        cout << "\nОберіть дію:\n"
+            "1: Вивести весь каталог книг\n"
+            "2: Додати книгу\n"
+            "3: Редагувати книгу\n"
+            "4: Пошук книги\n"
+            "0: Вийти з програми\n";
+
+        while (!(cin >> action))
+        {
+            cout << "Помилка. Введіть цифру 0-4. Спробуйте ще раз: ";
+            cin.clear();
+            cin.ignore(10000, '\n');
+        }
+
+        switch (action)
+        {
+        case 1:
+            showBooks();
+            break;
+        case 2:
+            AddModule::addBook();
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        case 0:
+            return 0;
+        }
+    }
     return 0;
 }git branch --show-current
