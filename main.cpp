@@ -301,11 +301,21 @@ namespace editModule
             case 1:
             {
                 string newAuthor;
-                do
+
+                while (true)
                 {
                     cout << "Введіть нового автора: ";
-                    getline(cin, newAuthor);
-                } while (newAuthor.empty());
+
+                    if (!getline(cin, newAuthor))
+                        return;
+
+                    if (newAuthor.find_first_not_of(" \t\r\n") != string::npos)
+                        break;
+
+                    cout << "Помилка. Автор не може бути порожнім "
+                            "або складатися лише з пробілів.\n";
+                }
+
                 books[index].author = newAuthor;
                 break;
             }
